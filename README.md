@@ -9,4 +9,4 @@ Calling will look like this: `python main.py [list of files to parse]` where `[l
 python main.py content/data/afs/c01/c01_ryum.dat content/data/afs/c02_elna.dat
 ```
 
-All models and motions parsed will be created/updated in the directory of each respective file parsed.
+All models and motions parsed will be added to the `./models/` directory.

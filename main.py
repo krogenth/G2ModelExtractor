@@ -2,7 +2,11 @@ import sys
 import os
 import io
 
+OUTPUT_DIR = "./models"
+
 def main():
+    create_output_dir()
+
     args = sys.argv[1:]
     if len(args) <= 0:
         print("Missing file to parse, please provide at least one file.")
@@ -10,8 +14,6 @@ def main():
     
     for filepath in args:
         with open(filepath, "rb") as f:
-            filename = get_file_name(filepath)
-            file_dir = get_file_directory(filepath)
             print("file opened: {}", filepath)
             model_index = 0
             motion_model_index = 0
@@ -52,16 +54,16 @@ def parse_motion_data(reader: io.BufferedReader, filepath: str, motion_model_ind
         writer.write(data)
 
 def write_model_filename(filepath: str, model_index: int) -> str:
-    return "{}/{}_model_{}.nj".format(get_file_directory(filepath), get_file_name(filepath), model_index)
+    return "{}/{}_model_{}.nj".format(OUTPUT_DIR, get_file_name(filepath), model_index)
 
 def write_motion_filename(filepath: str, motion_model_index: int, motion_index: int) -> str:
-    return "{}/{}_model_{}_motion_{}.njm".format(get_file_directory(filepath), get_file_name(filepath), motion_model_index, motion_index)
+    return "{}/{}_model_{}_motion_{}.njm".format(OUTPUT_DIR, get_file_name(filepath), motion_model_index, motion_index)
 
 def get_file_name(filepath: str) -> str:
     return os.path.splitext(os.path.basename(filepath))[0]
 
-def get_file_directory(filepath: str) -> str:
-    return os.path.dirname(filepath)
+def create_output_dir():
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 if __name__ == "__main__":
     main()
