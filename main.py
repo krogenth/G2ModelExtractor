@@ -60,7 +60,7 @@ def write_motion_filename(filepath: str, motion_model_index: int, motion_index: 
     return "{}/{}_model_{}_motion_{}.njm".format(OUTPUT_DIR, get_file_name(filepath), motion_model_index, motion_index)
 
 def get_file_name(filepath: str) -> str:
-    return os.path.splitext(os.path.basename(filepath))[0]
+    return os.path.basename(filepath)
 
 def create_output_dir():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
