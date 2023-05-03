@@ -14,7 +14,7 @@ def main():
     
     for filepath in args:
         with open(filepath, "rb") as f:
-            print("file opened: {}", filepath)
+            print("file opened: {}".format(filepath))
             model_index = 0
             motion_model_index = 0
             motion_index = 0
