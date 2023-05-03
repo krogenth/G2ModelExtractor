@@ -24,13 +24,16 @@ def main():
                     case b"MIXL":
                         f.seek(4, os.SEEK_CUR)
                         motion_model_index = int.from_bytes(f.read(1), byteorder='little', signed=False)
+                        # reset motion index for new model
+                        motion_index = 0
+                        f.seek(3, os.SEEK_CUR)
                     case b"NMDM":
                         parse_motion_data(f, filepath, motion_model_index, motion_index)
                         motion_index += 1
 
 def parse_model_data(reader: io.BufferedReader, filepath: str, model_index: int) -> None:
     write_filename = write_model_filename(filepath, model_index)
-    print("writing model: {}", write_filename)
+    print("writing model: {}".format(write_filename))
     with open(write_filename, "wb") as writer:
         bytes_to_read = int.from_bytes(reader.read(4), byteorder='little', signed=False)
         data = reader.read(bytes_to_read)
@@ -40,7 +43,7 @@ def parse_model_data(reader: io.BufferedReader, filepath: str, model_index: int)
 
 def parse_motion_data(reader: io.BufferedReader, filepath: str, motion_model_index: int, motion_index: int) -> None:
     write_filename = write_motion_filename(filepath, motion_model_index, motion_index)
-    print("writing motion: {}", write_filename)
+    print("writing motion: {}".format(write_filename))
     with open(write_filename, "wb") as writer:
         bytes_to_read = int.from_bytes(reader.read(4), byteorder='little', signed=False)
         data = reader.read(bytes_to_read)
