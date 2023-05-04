@@ -1,37 +1,37 @@
-import sys
 import os
 import io
+from pathlib import Path
 
 OUTPUT_DIR = "./models"
 
 def main():
     create_output_dir()
 
-    args = sys.argv[1:]
-    if len(args) <= 0:
-        print("Missing file to parse, please provide at least one file.")
-        return
-    
-    for filepath in args:
-        with open(filepath, "rb") as f:
-            print("file opened: {}".format(filepath))
-            model_index = 0
-            motion_model_index = 0
-            motion_index = 0
-            while (text := f.read(4)):
-                match text:
-                    case b"NJCM":
-                        parse_model_data(f, filepath, model_index)
-                        model_index += 1
-                    case b"MIXL":
-                        f.seek(4, os.SEEK_CUR)
-                        motion_model_index = int.from_bytes(f.read(1), byteorder='little', signed=False)
-                        # reset motion index for new model
-                        motion_index = 0
-                        f.seek(3, os.SEEK_CUR)
-                    case b"NMDM":
-                        parse_motion_data(f, filepath, motion_model_index, motion_index)
-                        motion_index += 1
+    root_dir = Path("./content/data/afs")
+    file_list = [f for f in root_dir.glob('**/*') if f.is_file()]
+    for file in file_list:
+        parse_file(file)
+
+def parse_file(filepath: str):
+    with open(filepath, "rb") as f:
+        print("file opened: {}".format(filepath))
+        model_index = 0
+        motion_model_index = 0
+        motion_index = 0
+        while (text := f.read(4)):
+            match text:
+                case b"NJCM":
+                    parse_model_data(f, filepath, model_index)
+                    model_index += 1
+                case b"MIXL":
+                    f.seek(4, os.SEEK_CUR)
+                    motion_model_index = int.from_bytes(f.read(1), byteorder='little', signed=False)
+                    # reset motion index for new model
+                    motion_index = 0
+                    f.seek(3, os.SEEK_CUR)
+                case b"NMDM":
+                    parse_motion_data(f, filepath, motion_model_index, motion_index)
+                    motion_index += 1
 
 def parse_model_data(reader: io.BufferedReader, filepath: str, model_index: int) -> None:
     write_filename = write_model_filename(filepath, model_index)
